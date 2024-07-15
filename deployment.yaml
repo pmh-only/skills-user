@@ -1,3 +1,16 @@
+apiVersion: vpcresources.k8s.aws/v1beta1
+kind: SecurityGroupPolicy
+metadata:
+  name: user
+  namespace: skills
+spec:
+  podSelector: 
+    matchLabels:
+      app: user
+  securityGroups:
+    groupIds:
+      - sg-0c9e5d0e9700274df
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
