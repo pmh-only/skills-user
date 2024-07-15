@@ -25,7 +25,8 @@ spec:
         topologyKey: capacity-spread
         whenUnsatisfiable: DoNotSchedule
         labelSelector:
-          app: user
+          matchLabels:
+            app: user
       serviceAccountName: user
       containers:
       - name: user
