@@ -20,6 +20,12 @@ spec:
       labels:
         app:  user
     spec:
+      topologySpreadConstraints:
+      - maxSkew: 1
+        topologyKey: capacity-spread
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          app: user
       serviceAccountName: user
       containers:
       - name: user
