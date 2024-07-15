@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  user
+  namespace: skills
+  labels:
+    app:  user
+spec:
+  selector:
+    matchLabels:
+      app: user
+  replicas: 3
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app:  user
+    spec:
+      serviceAccountName: user
+      containers:
+      - name: user
+        image: 648911607072.dkr.ecr.ap-northeast-2.amazonaws.com/user:latest
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+          limits:
+            cpu: 100m
+            memory: 100Mi
+        livenessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 5
+          timeoutSeconds: 2
+          successThreshold: 1
+          failureThreshold: 3
+          periodSeconds: 10
+        env:
+        - name: MONGODB_HOST
+          value: project-docdb.cluster-cemltsgrnhrl.ap-northeast-2.docdb.amazonaws.com
+        - name: MONGODB_PORT
+          value: '27018'
+        - name: MONGODB_USERNAME
+          value: docdbuser
+        - name: MONGODB_PASSWORD
+          value: docdb123!!
+        - name: AWS_REGION
+          value: ap-northeast-2
+        - name: AWS_SECRET_NAME
+          value: secret
+        - name: TOKEN_ENDPOINT
+          value: http://token.skills.svc.cluster.local:8080
+      restartPolicy: Always
